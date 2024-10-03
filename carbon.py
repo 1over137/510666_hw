@@ -19,19 +19,19 @@ def R(t):
     return N0/tau * np.exp(-t/tau) # derivative of N(t)
 
 
+prev_n = N0
 
-for STEP_SIZE in [10, 100, 1000]:
-    prev_n = N0
-    t_values = []
-    r_values = []
-    for t in np.arange(0, 20_000, STEP_SIZE)[1:]:
-        r = ( prev_n - N(t) ) / STEP_SIZE
-        prev_n = N(t)
-        t_values.append(t)
-        r_values.append(r)
-    plt.plot(t_values, r_values, label=f"Step size = {STEP_SIZE} years")
-t_values = np.arange(0, 20_000, 10)
-plt.plot(t_values, R(t_values), label="Exact solution")
+t_values = []
+r_values = []
+for t in np.arange(0, 20_000, STEP_SIZE)[1:]: # skip first value
+    r = ( prev_n - N(t) ) / STEP_SIZE
+    prev_n = N(t)
+    t_values.append(t)
+    r_values.append(r)
+plt.plot(t_values, r_values, label=f"Step size = {STEP_SIZE} years")
+
+t_values_ = np.arange(0, 20_000, 10)
+plt.plot(t_values_, R(t_values_), label="Exact solution")
 plt.xlabel("Time (years)")
 plt.ylabel("Activity (decays per year)")
 plt.legend()
