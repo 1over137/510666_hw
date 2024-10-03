@@ -1,0 +1,50 @@
+\documentclass[10pt]{article}
+\usepackage{hyperref}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{ {./} }
+\author{Shao-yu Tseng}
+\date{\today}
+
+\title{Homework \#2}
+\hypersetup{
+ pdfauthor={Shao-yu Tseng},
+ pdftitle={Homework \#2},
+}
+\usepackage{biblatex}
+
+\begin{document}
+
+\maketitle
+\setlength\parindent{0pt}
+\section*{Carbon dating}
+
+\begin{enumerate}
+  \item
+    \begin{flalign*}
+  \frac {1}{2} N_0 &= N_0 e^{- T_{1/2} / \tau} \\
+  \frac{1}{2} &= e^{-T_{1/2}/\tau} \\
+  \ln \frac{1}{2} &= -T_{1/2}/\tau \\
+  \ln 2 &= T_{1/2} / \tau \\
+  T_{1/2} &= \tau \ln 2
+    \end{flalign*}
+
+
+  \item
+
+        Taking the derivative of N(t) numerically:
+
+        The 10 and 100 year step sizes showed little difference from the exact solution. The 1000 year step size overestimated activity. For example, at t = 11000 years, the 1000 year step size estimate overestimates by 6.3 \%. Whether this is acceptable depends on the purpose. This is not as large of an error as I expected, perhaps because numerical differentiation is more stable than integration since it is anchored to the actual value of the function (the errors do not accumulate).
+
+    \includegraphics{graph}
+
+\end{enumerate}
+\newpage
+\section*{Golf ball}
+
+\includegraphics[width=\textwidth]{golf}
+
+In all examples, the drag force slowed down the golf ball and reduced the distance is traveled. However, the Magnus force produced extra lift that allowed the ball to reach higher than expected with only drag present for 30$^\circ$, 15$^\circ$, and 9$^\circ$, but it reduced the distance traveled by the 45$^{\circ}$ ball.
+
+\end{document}
