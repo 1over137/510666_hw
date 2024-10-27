@@ -18,7 +18,7 @@ T_N_POINTS = 2000
 def dwdt_part2(theta, omega, t, Omega_D, alpha_D):
     return -(g/l) * theta - 2*gamma*omega + alpha_D * np.sin(Omega_D * t)
 
-def euler_cormer(Omega_D, dwdt, t, theta0, alpha_D):
+def euler_cromer(Omega_D, dwdt, t, theta0, alpha_D):
     dt = t[1] - t[0]
     theta = np.zeros_like(t)
     omega = np.zeros_like(t) # theta'
@@ -63,7 +63,7 @@ def part2():
     amplitude = np.zeros(OMEGA_N_POINTS)
     phase = np.zeros(OMEGA_N_POINTS)
     last_phase = 0
-    fig, ax = plt.subplots(1,2, figsize=(12,6))
+    fig, ax = plt.subplots(2,2, figsize=(10,10))
     for i, Omega_D in enumerate(omegas:=np.linspace(0, 2, OMEGA_N_POINTS)):
         theta, omega = rk4(Omega_D, dwdt_part2, t, theta0=0, alpha_D=0.2)
         amplitude[i] = np.max(theta[T_N_POINTS//3:]) # skip the first 1/3 points, only consider steady state
@@ -80,16 +80,45 @@ def part2():
     omega_d_max = omegas[np.argmax(amplitude)]
 
     print(f'Max: $\Omega_D$ = {omega_d_max}, amplitude = {np.max(amplitude)}')
-    ax[0].plot(omegas[int(0.1*OMEGA_N_POINTS):], amplitude[int(0.1*OMEGA_N_POINTS):]) # ignore artifacts at very low omega_D
-    ax[0].annotate(f'Max: $\Omega_D$ = {omega_d_max:.3f}, amplitude = {np.max(amplitude):.3f} ', xy=(omega_d_max, np.max(amplitude)))
-    ax[1].plot(omegas[int(0.1*OMEGA_N_POINTS):], phase[int(0.1*OMEGA_N_POINTS):]) # ignore artifacts at very low omega_D
+    ax[0][0].plot(omegas[int(0.1*OMEGA_N_POINTS):], amplitude[int(0.1*OMEGA_N_POINTS):]) # ignore artifacts at very low omega_D
+    ax[0][0].annotate(f'Max: $\Omega_D$ = {omega_d_max:.3f}, amplitude = {np.max(amplitude):.3f} ', xy=(omega_d_max, np.max(amplitude)))
+    ax[0][1].plot(omegas[int(0.1*OMEGA_N_POINTS):], phase[int(0.1*OMEGA_N_POINTS):]) # ignore artifacts at very low omega_D
 
-    ax[0].set_title('Amplitude')
-    ax[1].set_title('Phase')
-    ax[0].set_xlabel(r'$\Omega_D$ (rad/s)')
-    ax[1].set_xlabel(r'$\Omega_D$ (rad/s)')
-    ax[0].set_ylabel('Amplitude (radians)')
-    ax[1].set_ylabel('Phase (radians)')
+    ax[0][0].set_title('RK4: Amplitude')
+    ax[0][1].set_title('RK4: Phase')
+    ax[0][0].set_xlabel(r'$\Omega_D$ (rad/s)')
+    ax[0][1].set_xlabel(r'$\Omega_D$ (rad/s)')
+    ax[0][0].set_ylabel('Amplitude (radians)')
+    ax[0][1].set_ylabel('Phase (radians)')
+
+    # use euler cromer
+    for i, Omega_D in enumerate(omegas:=np.linspace(0, 2, OMEGA_N_POINTS)):
+        theta, omega = euler_cromer(Omega_D, dwdt_part2, t, theta0=0, alpha_D=0.2)
+        amplitude[i] = np.max(theta[T_N_POINTS//3:]) # skip the first 1/3 points, only consider steady state
+
+        # find the phase w.r.t. the driving force, we know driving force is sin with phase 0
+        last_peak = np.argmax(theta[T_N_POINTS//2:]) + T_N_POINTS//2 # use only second half for this
+        phase[i] = (t[last_peak] * Omega_D) % (2*np.pi) - np.pi/2 # phase difference
+        if phase[i] < 0:
+            phase[i] += 2*np.pi
+
+        last_phase = phase[i]
+        #print(f'$\Omega_D$ = {Omega_D}, amplitude = {amplitude[i]}, phase = {phase[i]}')
+
+    omega_d_max = omegas[np.argmax(amplitude)]
+
+    print(f'Max: $\Omega_D$ = {omega_d_max}, amplitude = {np.max(amplitude)}')
+    ax[1][0].plot(omegas[int(0.1*OMEGA_N_POINTS):], amplitude[int(0.1*OMEGA_N_POINTS):]) # ignore artifacts at very low omega_D
+    ax[1][0].annotate(f'Max: $\Omega_D$ = {omega_d_max:.3f}, amplitude = {np.max(amplitude):.3f} ', xy=(omega_d_max, np.max(amplitude)))
+    ax[1][1].plot(omegas[int(0.1*OMEGA_N_POINTS):], phase[int(0.1*OMEGA_N_POINTS):]) # ignore artifacts at very low omega_D
+
+    ax[1][0].set_title('Euler-Cromer: Amplitude')
+    ax[1][1].set_title('Euler-Cromer: Phase')
+    ax[1][0].set_xlabel(r'$\Omega_D$ (rad/s)')
+    ax[1][1].set_xlabel(r'$\Omega_D$ (rad/s)')
+    ax[1][0].set_ylabel('Amplitude (radians)')
+    ax[1][1].set_ylabel('Phase (radians)')
+
     plt.savefig("oscillator-part2.png")
     plt.show()
     # calculate FWHM
@@ -135,17 +164,26 @@ def part4():
     fig, ax = plt.subplots(2,2, figsize=(10,10))
     t = np.linspace(0, 20, T_N_POINTS//2)
     thetas = []
-    for theta0 in np.linspace(0, 1, 6):
-        theta, _ = rk4(Omega_D, dwdt_part4, t, theta0, 0.2)
-        ax[0][0].plot(t, theta)
-        theta, _ = rk4(Omega_D, dwdt_part4, t, theta0, 1.2)
-        ax[0][1].plot(t, theta)
+    theta0 = 0
 
-    for theta0 in np.linspace(0, 1, 6):
-        theta, _ = rk4(Omega_D, dwdt_part2, t, theta0, 0.2)
-        ax[1][0].plot(t, theta)
-        theta, _ = rk4(Omega_D, dwdt_part2, t, theta0, 1.2)
-        ax[1][1].plot(t, theta)
+    theta, omega = rk4(Omega_D, dwdt_part4, t, theta0, 0.2)
+    ax[0][0].plot(t, theta, label="$\\theta$")
+    ax[0][0].plot(t, omega, label="$\\omega$")
+    ax[0][0].legend()
+    theta, _ = rk4(Omega_D, dwdt_part4, t, theta0, 1.2)
+    ax[0][1].plot(t, theta, label="$\\theta$")
+    ax[0][1].plot(t, omega, label="$\\omega$")
+    ax[0][1].legend()
+
+
+    theta, _ = rk4(Omega_D, dwdt_part2, t, theta0, 0.2)
+    ax[1][0].plot(t, theta, label="$\\theta$")
+    ax[1][0].plot(t, omega, label="$\\omega$")
+    ax[1][0].legend()
+    theta, _ = rk4(Omega_D, dwdt_part2, t, theta0, 1.2)
+    ax[1][1].plot(t, theta, label="$\\theta$")
+    ax[1][1].plot(t, omega, label="$\\omega$")
+    ax[1][1].legend()
     
 
     ax[0][0].set_title("Non-linear, $\\alpha_D$ = 0.2 rad/s")
