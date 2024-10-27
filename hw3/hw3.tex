@@ -1,0 +1,89 @@
+\documentclass[10pt]{article}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\author{Shao-yu Tseng}
+\date{\today}
+
+\title{Homework \#3}
+
+\begin{document}
+
+\maketitle
+
+\setlength\parindent{0pt}
+
+\section{Oscillatory motion and chaos}
+\subsection{}
+
+Reorganizing the equation and rewriting it into a complex exponential, we have:
+\begin{align}
+  \frac{d^2 \theta}{dt^2}  + 2\gamma \frac{d\theta}{dt} + \frac{g}{l}\theta = \alpha_{D} \sin (\Omega_{D}t) \\
+  \frac{d^2 z}{dt^2}  + 2\gamma \frac{dz}{dt} + \frac{g}{l}z = \alpha_{D}  e^{i\Omega_{D} t}
+\end{align}
+  Transforming the equation to a complex one, and using the method of undetermined coefficients:
+
+\begin{align}
+  z = Ae^{i\Omega_{D} t} \\
+  -\Omega_{D}^{2}A + 2 \gamma i \Omega_{D} A + \frac{g}{l}A = a_{D}
+\end{align}
+Rewriting the factor into exponential form:
+\begin{align}
+  a_{D} = A(\frac{g}{l} + 2\gamma i \Omega_{D} - \Omega_{D}^{2}) = Are^{i\phi} \\
+  r = \sqrt{ ((\frac{g}{l})^{2} - \Omega_{D}^{2})^{2} + 4\gamma^{2}\Omega_{D}^{2}  }\\
+  A = \frac{a_{D}}{r} e^{i\phi}\\
+  \theta(t) = \Im (z) = \frac{a_{D}}{r} \sin(\Omega_{D} t - \phi)
+\end{align}
+To maximize the amplitude, we maximize \( \frac{\alpha_D}{r} \), which can be done by minimizing \( r \), which is the same as minimizing \( r^{2} \):
+\begin{align}
+  r^{2} = (\frac{g}{l})^{2} + \Omega_{D}^{4} - 2\frac{g}{l}\Omega_{D}^{2} + 4\gamma^{2}\Omega_{D}^{2} \\
+  \frac{dr^{2}}{d\Omega_{D}} = 4 \Omega_{D}^{3} + 2(4\gamma^{2} - 2 \frac{g}{l}) \Omega_{D} = 0
+\end{align}
+Solving this equation numerically, we have \( \Omega_{D} = 0.935 \), therefore, we expect resonance to occur at this value since it maximizes the amplitude of our solution.
+
+Evaluating for the amplitude, we get A = \( \frac{0.25}{\sqrt { (1-0.935^{2})^{2} + 4 * 0.25^{2} * 0.935^{2} }} = 0.413   \) radians, and since \(\sin 0.413 = 0.401\), we can say that the linear approximation is relatively accurate.
+\subsection{}
+\includegraphics[width=0.9\textwidth]{oscillator-part2}
+
+The FWHM of the resonance curve is 1.097 rad/s. This is around 4 times the value of $ \gamma $
+
+\subsection{}
+\includegraphics[width=0.9\textwidth]{oscillator-part3}
+
+\subsection{}
+\includegraphics[width=0.9\textwidth]{oscillator-part4}
+
+\subsection{}
+\includegraphics[width=0.9\textwidth]{oscillator-part5}
+\begin{center}
+\begin{tabular}{ c c }
+  $\alpha_{D}$ & Lyapunov exponent \\ \midrule
+    0.2 & -0.138 \\
+    0.5 & -0.138 \\
+    1.2 & 0.095
+\end{tabular}
+\end{center}
+A positive Lyapunov exponent indicates that the system is very sensitive to initial conditions, or \textit{chaotic}. As we can see from the plot, the difference in theta grows quickly as time progresses for the case of \(alpha_{D} = 1.2\), but not the other two.
+
+
+\section{Poisson Equation for Dipole}
+\subsection{}
+\includegraphics[width=0.9\textwidth]{poisson-part1}
+
+By applying Coulomb's law for each of the point charges and adding the result, we know that the electric field of the dipole is proportional to $ \frac{1}{r^3} $. Since the electric potential is the integral of the field over a path, the potential must be proportional to $ \frac{1}{r^2} $. We can verify this with the plot: the equipotential lines get further and further apart, which indicates that the dropoff is faster than linear. The lines would be equidistant in the case of a \(\frac{1}{r}\) dropoff.
+
+\subsection{}
+\includegraphics[width=0.6\textwidth]{poisson-part2}
+
+The iterations needed appears to increase linearly with respect to the negative logarithm of the tolerance. This is expected, as we can observe that the algorithm uses the current value to obtain the new values, resulting in exponential convergence.
+
+\subsection{}
+\includegraphics[width=0.8\textwidth]{poisson-part3}
+
+As expected, while the iterations required scales as $N^2$ for the  Jacobi method, it scales only linearly with N for the simultaneous over-relaxation method. However, despite the much fewer iterations needed, it ran much slower because the loop is in python instead of numpy's optimized Fortran code.
+
+\end{document}
