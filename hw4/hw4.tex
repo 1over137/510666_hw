@@ -1,0 +1,75 @@
+\documentclass[10pt]{article}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\author{Shao-yu Tseng}
+\date{\today}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+\renewcommand{\thesection}{}
+\title{Homework \#4}
+\begin{document}
+
+\maketitle
+
+\setlength\parindent{0pt}
+\section{Random Numbers}
+
+\subsection{Uniform distribution histograms}
+\includegraphics[width=0.8\textwidth]{rnumbers-part1.png}
+\subsection{Gaussian distribution histograms}
+This implements the Box-Muller transformation algorithm.
+We can observe that the probability density function is close to the Gaussian pdf, especially with 1000000 samples.
+
+\includegraphics[width=0.8\textwidth]{rnumbers-part2.png}
+
+\section{2D Random Walk}
+\subsection{}
+Averaging across 10000 walks:
+
+\includegraphics[width=0.8\textwidth]{rwalk-part1.png}
+\subsection{}
+We can observe from the second part of the plot that \(<x^2>\) grows linearly with respect to time.
+
+\section{Diffusion equation}
+\subsection{}
+
+Using integral table for  \(\int^{\infty}_{-\infty} x e^{-a x^{2}} = \frac{1}{2}\sqrt{\frac{\pi}{a^{3}}}\)
+
+\begin{align*}
+\langle x(t)^2 \rangle &= \int_{-\infty}^{\infty} x^2 \rho(x, t) dx\\
+&= \int_{-\infty}^{\infty} \frac{x^2}{\sqrt{2 \pi \sigma(t)^{2}}} \exp(-\frac{x^{2}}{2\sigma(t)^{2}})  dx\\
+&= \frac{1}{\sqrt{2 \pi \sigma(t)^{2}}}  \int_{-\infty}^{\infty} x^{2} \exp(-\frac{x^{2}}{2\sigma(t)^{2}})  dx \\
+&= \frac{1}{\sqrt{2 \pi \sigma(t)^{2}}} \frac{1}{2}\sqrt{\frac{\pi}{\frac{1}{2\sigma(t)^{2}}^{3}}} \\
+&= \frac{1}{\sqrt{2 \pi \sigma(t)^{2}}} \frac{1}{2} \sqrt{\pi} \sqrt{2\sigma(t)^{6}} \\
+&= \frac{1}{\sqrt{2 \pi}} \frac{1}{\sigma(t)} \sqrt{\pi} \sqrt{2} \sigma(t)^{3} = \sigma(t)^{2}
+\end{align*}
+\subsection{}
+\includegraphics[width=0.8\textwidth]{diffusion-part2.png}
+
+We can observe that the Gaussian almost perfectly overlaps the distribution (the blue curve is under the orange). This is because a spreading Gaussian is the solution to the diffusion equation given a point-like source.
+
+\section{Mixing of two gases}
+\subsection{}
+Plotted together with part 2.
+\subsection{}
+\includegraphics[width=0.7\textwidth]{gases-part2.png}
+
+\subsection{}
+As we can observe in the plot below, the particles slowly move to reduce the concentration gradient.
+
+\includegraphics[width=0.7\textwidth]{gases-part3.png}
+
+
+\section{Contributions}
+Expression for the finite difference method for solving the diffusion equation.
+
+\url{https://sites.me.ucsb.edu/~moehlis/APC591/tutorials/tutorial5/node3.html}
+
+Integral tables
+
+\url{https://en.wikipedia.org/wiki/List_of_integrals_of_exponential_functions}
+\end{document}
