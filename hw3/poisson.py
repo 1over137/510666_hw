@@ -3,7 +3,6 @@ import argparse
 from tqdm import tqdm
 import matplotlib.pyplot as plt 
 
-# parse --part=1 2 3
 parser = argparse.ArgumentParser()
 parser.add_argument('--part', type=int)
 args = parser.parse_args()
@@ -14,7 +13,7 @@ a = 0.6 # dist
 def jacobi_relax(X,Y,V, rho, tol):
     V_new = V.copy()
     for i in tqdm(range(1000000)): #max iterations
-        # use poisson's equation. New value is the average of the neighbors plus our laplacian (rho)
+        # use poisson's equation. New value is the average of the neighbors minus our laplacian (-rho)
         V_new[1:-1, 1:-1] = (
             V[2:, 1:-1] + V[:-2, 1:-1] + V[1:-1, 2:] + V[1:-1, :-2] + rho[1:-1, 1:-1]
         ) / 4

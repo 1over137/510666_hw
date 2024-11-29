@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 
-# parse --part=2 3 4
 parser = argparse.ArgumentParser()
 parser.add_argument('--part', type=int)
 args = parser.parse_args()

@@ -27,14 +27,12 @@ def energy(lattice):
 @nb.njit
 def metropolis_sweep(lattice, T):
     n = lattice.shape[0]
-    # E0 = energy(lattice)
     for _ in range(n**2):
         i = np.random.randint(n)
         j = np.random.randint(n)
         spin = lattice[i, j]
-        #Enew = energy(newlattice)
         dE = 2 * J * spin * (lattice[(i+1)%n, j] + lattice[i, (j+1)%n] +
-                             lattice[(i-1)%n, j] + lattice[i, (j-1)%n]) # easy optimization
+                             lattice[(i-1)%n, j] + lattice[i, (j-1)%n]) # easy optimization, only local change
         #dE = Enew - E0
         transition_prob = np.exp(-dE / (k_B * T))
         if dE < 0 or np.random.rand() < transition_prob:
@@ -43,15 +41,13 @@ def metropolis_sweep(lattice, T):
 def magnetization(lattice):
     return np.abs(np.sum(lattice))
 
-def simulate(T) -> int:
+def simulate_M(T) -> int:
     np.random.seed(123456)
     lattice = init_lattice(50)
 
-    last_mags = []
-
     for _ in range(200000):
         metropolis_sweep(lattice, T)
-        last_mags.append(magnetization(lattice))
+
 
     return magnetization(lattice)
 
@@ -60,7 +56,7 @@ def part1():
     start = time.time()
     # parallelize it
     with ProcessPoolExecutor() as executor:
-        M = list(executor.map(simulate, temps))
+        M = list(executor.map(simulate_M, temps))
 
 
     print('Elapsed time: ', time.time() - start)
@@ -119,15 +115,14 @@ def part2():
         C_list_dict[size] = C_list
 
     print('Elapsed time: ', time.time() - start)
-    #print(C_list_list)
+
     for size, C_list in C_list_dict.items():
         if size in to_plot:
             ax[0].plot(temps, C_list, label=f'n={size}')
     ax[0].set_xlabel('Temperature')
     ax[0].set_ylabel('Specific Heat')
     ax[0].legend()
-    # convert C_list_list to numpy array
-    #C_max = np.max(np.array(C_list_list), axis=1)
+
     C_max = [np.max(C_list[40:]) for C_list in C_list_dict.values()]
     ax[1].plot(n, C_max, label='Cmax', marker='o')
     ax[1].plot(n, np.log(n), label='log(n)')
